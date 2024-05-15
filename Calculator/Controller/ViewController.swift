@@ -14,24 +14,38 @@ class ViewController: UIViewController {
     
     private var isFinishedTypingNumber: Bool = true
     
+    private var displayValue: Double {
+        //getting the number from screen
+        get {
+            guard let number = Double(displayLabel.text!) else {
+                fatalError("Cannot convert display label text to a Double.")
+            }
+            print("displayValue: \(number)")
+            return number
+        }
+        set {
+            //setting value on the screen when this variable gets updated
+            displayLabel.text = String(newValue)
+        }
+    }
+    
     @IBAction func calcButtonPressed(_ sender: UIButton) {
         
         //What should happen when a non-number button is pressed
         isFinishedTypingNumber = true
-        //getting number from screen
-        guard let number = Double(displayLabel.text!) else {
-            fatalError("Cannot convert display label text to a Double.")
-        }
         
         //getting text from button pressed and performing related operation
         if let calcMethod = sender.currentTitle {
-            if calcMethod == "+/-" {
-                displayLabel.text = String(number * -1)
-            } else if calcMethod == "AC" {
-                displayLabel.text = "0"
-            } else if calcMethod == "%" {
-                displayLabel.text = String(number / 100.0)
+            //creating obj of CalculatorLogic class
+            let calculator = CalculatorLogic(number: displayValue)
+            
+            //checking optional return if it is not nil
+            guard let result = calculator.calculate(symbol: calcMethod) else {
+                fatalError("The result of the calculation is nil.")
             }
+            //assigning result value to displayValue 
+            displayValue = result
+            
         }
         
     }
@@ -46,14 +60,12 @@ class ViewController: UIViewController {
                 displayLabel.text = numValue
                 isFinishedTypingNumber = false
             } else {
-                
+                //to avoid multiple decimal points
                 if numValue == "." {
-                    guard let currentDisplayValue = Double(displayLabel.text!) else {
-                        fatalError("Cannot convert display label text to a Double.")
-                    }
+                    
                     //checking if display value is an int or double
-                    let isInt = floor(currentDisplayValue) == currentDisplayValue
-                    //if it is not an int, need to return out of this method, to avoid adding another dot in the number 
+                    let isInt = floor(displayValue) == displayValue
+                    //if it is not an int, need to return out of this method, to avoid adding another dot in the number
                     if !isInt {
                         return
                     }
