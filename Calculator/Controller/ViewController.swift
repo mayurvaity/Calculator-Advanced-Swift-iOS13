@@ -29,6 +29,9 @@ class ViewController: UIViewController {
         }
     }
     
+    //creating obj of CalculatorLogic class
+    private var calculator = CalculatorLogic()
+    
     @IBAction func calcButtonPressed(_ sender: UIButton) {
         
         //What should happen when a non-number button is pressed
@@ -36,16 +39,14 @@ class ViewController: UIViewController {
         
         //getting text from button pressed and performing related operation
         if let calcMethod = sender.currentTitle {
-            //creating obj of CalculatorLogic class
-            let calculator = CalculatorLogic(number: displayValue)
+            //setting number value in the struct 
+            calculator.setNumber(displayValue)
             
             //checking optional return if it is not nil
-            guard let result = calculator.calculate(symbol: calcMethod) else {
-                fatalError("The result of the calculation is nil.")
+            if let result = calculator.calculate(symbol: calcMethod) {
+                //assigning result value to displayValue
+                displayValue = result
             }
-            //assigning result value to displayValue 
-            displayValue = result
-            
         }
         
     }
